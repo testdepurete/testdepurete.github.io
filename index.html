@@ -1,9 +1,376 @@
-<!DOCTYPE html>
-<html>
-<body>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<h1>My First Heading A</h1>
-<p>My first paragraph.</p>
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<style>
+p#question_no {
+    height: 70px;
+}
+.btn-danger{
+padding-left: 40px;
+padding-right: 40px;
 
-</body>
-</html>
+}
+.btn-success{
+padding-left: 40px;
+padding-right: 40px;
+}
+.category-panel{
+        background: cornflowerblue;
+    padding: 15%;
+    border-radius: 6px;
+    margin: 1%;
+    color: azure;
+    }
+
+@keyframes fadeincs{
+    0%{
+        opacity: 0;
+    }
+   
+    100%{
+        opacity: 1;
+    }
+}
+/* .spinner{
+    animation: fadeincs 1s ease-in-out ;
+}
+.resultguage{
+    animation: fadeincs 1s ease-in-out ;
+} */
+
+@media only screen and (max-width: 1920px) {
+  .start-btn{padding: 20px 120px 20px 120px; background:red;}
+}
+@media only screen and (max-width: 600px) {
+  .start-btn{padding: 20px 20px 20px 20px; background:red; font-size:12px;}
+p#question_no {
+    font-size: 14px;
+}
+}
+</style>
+<button class="btn btn-danger start-btn">Commencer le test de pureté
+</button>
+<div class="row justify-content-center  results-chart d-none" style="color:white; background:red; border-radius:10px; padding:20px;font-family: 'Carter One', cursive;text-align:center;" =""="">
+    <p class="results"></p>
+</div>
+<div class="row mt-5 justify-content-center mb-5 qBox d-none" style="text-align:center;justify-content:center; color:white; font-family: 'Carter One', cursive; font-size:30px;">
+    <div class="col-md-12">
+        <p id="question_no">{'Q#.'+parseInt(qNumber+1)+" "}{questions[qNumber].question}</p>
+        <div class="qTypePrimary ">
+            <button type="button" class="btn btn-success selectbtn" onclick="chechForInc()">Oui</button>
+            <button type="button" class="btn btn-danger rejectbtn" onclick="chechForIncReject()">Non</button>
+        </div>
+        <div class="qTypeOther d-none">
+            <button type="button" class="btn btn-danger" onclick="chechForIncReject()">0</button>
+            <button type="button" class="btn btn-success" onclick="chechForInc()">1</button>
+            <button type="button" class="btn btn-success" onclick="chechForInc()">2</button>
+            <button type="button" class="btn btn-success" onclick="chechForInc()">3</button>
+            <button type="button" class="btn btn-success" onclick="chechForInc()">4</button>
+            <button type="button" class="btn btn-success" onclick="chechForInc()">5</button>
+        </div>
+    </div>
+</div>
+
+<div class="justify-content-center mt-5 catRes">
+    <div style="display: grid;grid-template-columns: 1fr 1fr 1fr;text-align: center;">
+    <div class="category-panel" data-id="1" id="cat_1">Alcool<span></span></div><div class="category-panel bg-danger" data-id="2" id="cat_2">Drogue</div><div class="category-panel bg-primary" data-id="3" id="cat_3">Sexe</div>
+    <div class="category-panel bg-secondary" data-id="4" id="cat_4">Hygiène</div><div data-id="5" id="cat_5" class="category-panel bg-success">Morale</div><div data-id="6" id="cat_6" class="category-panel bg-warning">Positives</div>
+    </div>
+</div>
+<div class="justify-content-center catRes">
+    <a href="javascript:void(0)" onclick=" window.location.reload()" class="btn btn-success btn-lg w-100">Réessayer</a>
+</div>
+<script>
+    
+    var qNumber = 0
+    var points = 100
+    var answer = ''
+    var showResult = false
+    var percentage = 0
+    var categories = []
+    var itemsCat 
+    var questions = [
+        { question: "Avez-vous déjà eu un rendez-vous?", qType: false ,cat:1},
+        { question: "Savez-vous ce que c’est que de se tenir la main d’une manière romantique?", qType: true ,cat:1},
+        { question: "Avez-vous déjà été dans une relation sérieuse?", qType: false ,cat:1},
+        { question: "Avez-vous déjà dansé avec quelqu’un d’une manière suggestive?", qType: false ,cat:1},
+        { question: "Avez-vous déjà embrassé un non-membre de la famille?", qType: false ,cat:1},
+        { question: "Avez-vous embrassé un non-membre de la famille sur les lèvres?", qType: false ,cat:1},
+        { question: "Français embrassé quelqu’un?", qType: false ,cat:1},
+        { question: "Français embrassé quelqu’un en public?", qType: false ,cat:1},
+        { question: "Avez-vous déjà embrassé votre fille / petit ami sur le cou?", qType: false ,cat:1},
+        { question: "Aimez-vous donner ou recevoir des suçons d’amour?", qType: false ,cat:1},
+        { question: "Avez-vous déjà embrassé quelqu’un pendant quelques heures (non-stop)?", qType: false ,cat:1},
+        { question: "Vous êtes-vous engagé dans un jeu coquin où la punition des perdants était le déshabillage ?", qType: false ,cat:1},
+        { question: "Vous êtes-vous déjà touché alors que quelqu’un d’autre était dans la pièce ?", qType: false ,cat:1},
+        { question: "Quelqu’un vous a-t-il déjà attrapé en vous touchant?", qType: false ,cat:1},
+        { question: "Lisez-vous des magazines pour adultes ou regardez-vous des films pour adultes?", qType: false ,cat:1},
+        { question: "Aimez-vous donner ou recevoir un frottement sensuel?", qType: false ,cat:1},
+        { question: "Avait-on ou a-t-on reçu des « boules bleues » (alias bordures)?", qType: false ,cat:2},
+        { question: "Avez-vous fait des choses coquines sur FaceTime?", qType: false ,cat:2},
+        { question: "Vous avez trompé votre partenaire ?", qType: false ,cat:2},
+        { question: "Vous avez acheté des contraceptifs?", qType: false ,cat:2},
+        { question: "Vous avez utilisé un jouet avec un partenaire?", qType: false ,cat:2},
+        { question: "Ingéré de l’alcool dans un contexte non religieux?", qType: false ,cat:2},
+        { question: "Vous avez joué à un jeu à boire?", qType: false ,cat:2},
+        { question: "Vous avez été ivre?", qType: false ,cat:2},
+        { question: "Fausse sobriété envers les parents ou les enseignants?", qType: false ,cat:2},
+        { question: "Avez-vous déjà dormi dans la maison de votre garçon / petite amie?", qType: false ,cat:2},
+        { question: "Avez-vous déjà été débarrassé de votre colocataire pour pouvoir faire quelque chose de méchant?", qType: false ,cat:2},
+        { question: "Buvez-vous des boissons?", qType: false ,cat:2},
+        { question: "Avez-vous déjà trompé les autres en leur faisant croire que vous êtes sobre alors que vous ne l’étiez pas ?", qType: false ,cat:2},
+        { question: "Avez-vous déjà eu une vraie gueule de bois?", qType: false ,cat:2},
+        { question: "Vous avez eu une perte de mémoire sévère due à l’alcool (blackout)?", qType: false ,cat:2},
+        { question: "Tabac d’occasion?", qType: false ,cat:2},
+        { question: "Fumez-vous?", qType: false ,cat:3},
+        { question: "Étiez-vous d’une hauteur à une autre?", qType: false ,cat:3},
+        { question: "Vous avez été mis en probation disciplinaire ou suspendu?", qType: false ,cat:3},
+        { question: "Avez-vous déjà été appelé au bureau du directeur pour mauvaise conduite?", qType: false ,cat:3},
+        { question: "Avez-vous déjà nagé dans une piscine où tout le monde (y compris vous) était sans tissu?", qType: false ,cat:3},
+        { question: "Uriné en public?", qType: false ,cat:3},
+        { question: "Quelqu’un vous a-t-il déjà appelé les flics pour quelque raison que ce soit ?", qType: false ,cat:3},
+        { question: "Avez-vous déjà essayé de fuir la police?", qType: false ,cat:3},
+        { question: "La police vous avait-elle interrogé ?", qType: false ,cat:3},
+        { question: "La police vous avait-elle menotté ?", qType: false ,cat:3},
+        { question: "Vous avez été arrêté ?", qType: false ,cat:3},
+        { question: "Avez-vous déjà été emprisonné?", qType: false ,cat:3},
+        { question: "Vous avez été reconnu coupable d’un crime?", qType: false ,cat:3},
+        { question: "Avez-vous endommagé des propriétés publiques ou privées exprès?", qType: false ,cat:3},
+        { question: "Avez-vous déjà eu 69 ans?", qType: false ,cat:3},
+        { question: "Vous avez rejoint le club mile high ?", qType: false ,cat:3},
+        { question: "Avez-vous déjà essayé dans quatre styles / positions différents?", qType: false ,cat:4},
+        { question: "Avez-vous déjà rencontré et couché avec quelqu’un le même jour?", qType: false ,cat:4},
+        { question: "L’avez-vous déjà fait dans un véhicule?", qType: false ,cat:4},
+        { question: "Avez-vous déjà vécu quelque chose de coquin en plein air?", qType: false ,cat:4},
+        { question: "Voulez-vous faire des choses coquines dans une piscine?", qType: false ,cat:4},
+        { question: "Avez-vous déjà été méchant avec votre partenaire alors que vous ou les parents de votre partenaire étiez dans une autre pièce?", qType: false ,cat:4},
+        { question: "Avez-vous déjà eu de sérieuses activités coquines pendant que quelqu’un d’autre regardait?", qType: false ,cat:4},
+        { question: "Avez-vous déjà fait des choses coquines dans un avion?!", qType: false ,cat:4},
+        { question: "Avez-vous déjà invité quelqu’un juste pour faire des choses coquines avec eux?", qType: false ,cat:4},
+        { question: "Avez-vous déjà couché avec quelqu’un de plus âgé que vous?", qType: false ,cat:4},
+        { question: "Vous avez subi un test d’ITS en raison de soupçons raisonnables?", qType: false ,cat:4},
+        { question: "Vous avez eu une ITS?", qType: false ,cat:4},
+        { question: "Vous avez eu peur de la grossesse?", qType: false ,cat:4},
+        { question: "Fécondé quelqu’un ou a été fécondé?", qType: false ,cat:4},
+        { question: "Vous avez commis un acte de voyeurisme ?", qType: false ,cat:4},
+        { question: "Vous avez commis un acte d’inceste ?", qType: false ,cat:4},
+        { question: "Engagé dans la bestialité?", qType: false ,cat:5},
+        { question: "Vous vous sentez rarement en insécurité", qType: false ,cat:5},
+        { question: "Vous préférez généralement vous venger plutôt que pardonner ?", qType: false ,cat:5},
+        { question: "Avez-vous regretté?", qType: false ,cat:5},
+        { question: "Évitez de vous disputer, même lorsque je ne suis pas d’accord.", qType: false ,cat:5},
+        { question: "Vos émotions vous contrôlent plus que vous ne les contrôlez.", qType: false ,cat:5},
+        { question: "J’aime être là pour les gens quand ils se sentent tristes.", qType: false ,cat:5},
+        { question: "Avez-vous déjà couché avec 2 personnes différentes le même jour?", qType: false ,cat:5},
+        { question: "Avez-vous eu plus de 5 partenaires dans votre vie pour une relation personnelle?", qType: false ,cat:5},
+        { question: "Avez-vous des photos / vidéos coquines de vous?", qType: false ,cat:5},
+        { question: "Avez-vous déjà reçu de l’argent pour la satisfaction physique? Avez-vous payé pour cela?", qType: false ,cat:5},
+        { question: "Avez-vous déjà jeté un coup d’œil aux autres pendant qu’ils faisaient quelque chose de méchant dans leur espace privé?", qType: false ,cat:5},
+        { question: "Avez-vous déjà inclus un animal dans vos activités de satisfaction physique?", qType: false ,cat:5},
+        { question: "Fait en public?", qType: false ,cat:5},
+        { question: "Payé pour un site de rencontre premium?", qType: false ,cat:5},
+        { question: "Avez-vous percé quelque chose sous votre cou?", qType: false ,cat:5},
+        { question: "Avez-vous déjà jeté des œufs dans une maison ou une voiture?", qType: false ,cat:6},
+        { question: "Avez-vous déjà parcouru 100 miles ou plus dans le but principal de votre plaisir?", qType: false ,cat:6},
+        { question: "Avez-vous déjà été photographié ou filmé vos affaires personnelles?", qType: false ,cat:6},
+        { question: "Avez-vous déjà bloqué plus de 10 personnes sur Snapchat?", qType: false ,cat:6},
+        { question: "Avez-vous déjà eu une rancune contre quelqu’un?", qType: false ,cat:6},
+        { question: "Avez-vous déjà invité quelqu’un juste pour son apparence?", qType: false ,cat:6},
+        { question: "Nié avoir eu des relations physiques avec quelqu’un, alors que vous l’avez réellement eu?", qType: false ,cat:6},
+        { question: "Avez-vous déjà volé à l’étalage?", qType: false ,cat:6},
+        { question: "Avez-vous déjà acheté ou vendu quelque chose sur un marché noir? (produits contrefaits)", qType: false ,cat:6},
+        { question: "Vous avez lu le journal intime, le message texte ou le snapchat de quelqu’un d’autre à son insu et / ou sans son consentement?", qType: false ,cat:6},
+        { question: "Avez-vous déjà lu le message WhatsApp privé de quelqu’un à son insu et / ou sans son consentement?", qType: false ,cat:6},
+        { question: "Avez-vous déjà chanté des chansons racistes ou dit des remarques racistes?", qType: false ,cat:6},
+        { question: "Avez-vous déjà menti sur le fait d’être dans un groupe ou un de vos talents pour impressionner quelqu’un?", qType: false ,cat:6},
+        { question: "Avez-vous déjà envoyé ou reçu un appel téléphonique obscène anonyme?", qType: false ,cat:6},
+        { question: "Avez-vous déjà sorti en public sans vêtements?", qType: false ,cat:6},
+        { question: "Vous avez téléchargé un virus sur l’ordinateur de quelqu’un ou cassé le téléphone de quelqu’un?", qType: false ,cat:6},
+        { question: "Répandre une fausse rumeur sur quelqu’un exprès?", qType: false ,cat:1},
+        { question: "Vous avez menti sur le fait d’être ivre ou défoncé à un membre de la famille ou à un adulte?", qType: false ,cat:1},
+        { question: "Vous avez été mis en probation ou suspendu de l’école?", qType: false ,cat:1},
+        { question: "Vous avez commis un acte d’inceste ?", qType: false ,cat:1},
+    ]
+    var cats = document.querySelectorAll(".catRes")
+    // var _cpuGuage;
+
+    const calculatePoints = () => {
+
+        if (points >= 0 && points <= 8) {
+            answer = 'Tu es aussi pur que l`or. Très peu de gens tombent dans ce groupe.'
+
+        } else if (points >= 9 && points <= 44) {
+            answer = 'Vous êtes tout à fait pur. Peut-être avez-vous embrassé ou tenu la main de quelqu`un.'
+
+        } else if (points >= 45 && points <= 76) {
+            answer = 'Vous êtes moyennement pur. Vous avez probablement aimé quelqu`un.'
+
+        } else if (points >= 77 && points <= 93) {
+            answer = 'Votre pureté est entachée. Vous avez eu de nombreuses expériences coquines, consommé de la drogue et/ou eu des démêlés avec la justice.'
+
+        } else if (points >= 94 && points <= 97) {
+            answer = 'Votre pureté est très souillée. Vous avez probablement consommé des drogues dures, été en prison et/ou été intime en public.'
+
+        } else if (points >= 98 && points <= 100) {
+            answer = 'Vous êtes aussi corrompu qu`ils viennent. Vous vous êtes livré à des actes assez sauvages, notamment en payant – ou en étant payé – l`intimité.'
+
+        }
+    }
+    const chechForInc = () => {
+
+        if (questions.indexOf(questions[questions.length - 1]) != qNumber) {
+            qNumber = qNumber + 1
+            
+            questionActive(qNumber)
+            itemsCat={
+                'qNumber':qNumber,
+                'category':questions[qNumber].cat,
+                'points':1
+            }
+            categories.push(itemsCat)
+        } else {
+
+            
+            showResult = true
+            itemsCat={
+                'qNumber':qNumber,
+                'category':questions[qNumber].cat,
+                'points':1
+            }
+            categories.push(itemsCat)
+
+            calculatePoints()
+            
+            commonResultToggle(showResult)
+            
+        }
+    }
+    const chechForIncReject = () => {
+
+
+        if (questions.indexOf(questions[questions.length - 1]) != qNumber) {
+            qNumber = qNumber + 1
+            points = points - 1
+            questionActive(qNumber)
+            itemsCat={
+                'qNumber':qNumber,
+                'category':questions[qNumber].cat,
+                'points':0
+            }
+            categories.push(itemsCat)
+
+        } else {
+
+            points = points - 1
+            showResult = true
+           
+            calculatePoints()
+            
+             commonResultToggle(showResult)
+             itemsCat={
+                'qNumber':qNumber,
+                'category':questions[qNumber].cat,
+                'points':0
+            }
+            categories.push(itemsCat)
+            
+        }
+    }
+
+    const commonResultToggle = (showResult) => {
+        // document.querySelector(".spinner").classList.remove('d-none')
+        if (showResult) {
+            document.querySelector(".results-chart").classList.remove('d-none')
+            document.querySelector(".results").innerText = answer
+            getCats(showResult)
+            document.querySelector(".rejectbtn").removeAttribute('onclick')
+            document.querySelector(".selectbtn").removeAttribute('onclick')
+            
+            // document.querySelector(".resultguage").classList.add("hideMsg")
+        
+            // if( document.querySelector(".resultguage").classList.contains('hideMsg'))
+            // {
+            //     document.querySelector(".qBox").style.display="none"
+                
+            // }
+            if( document.querySelector("g"))
+            {
+                document.querySelector("g").nextSibling.style.display="none"
+                // _cpuGuage.options.dataSource.pointers.pointer[0].value = points
+                
+
+setTimeout(()=>{
+document.querySelector(".spinner").classList.add('d-none')
+document.querySelector("g").nextSibling.style.display="none"
+// document.querySelector(".resultguage").style.visibility=""
+},2000)
+
+                
+            }
+        
+            
+            
+
+        }
+    }
+    const getCatPercent = (cat,elem)=>{
+        var _cat = JSON.parse(cat)
+        var res =  categories.filter((r)=>{return r.category == _cat})
+        
+        var total = res.length
+        var sum = 0
+        res.forEach((it,ind)=>{
+
+            sum = sum+JSON.parse(it.points)
+        })
+        var percnCat = (sum/total)*100
+         document.querySelectorAll(".category-panel")[elem].innerHTML += ` <span>${percnCat.toFixed(2)}%</span>`
+         cats.forEach((r)=>{
+        r.style.display =''
+        document.querySelector(".qBox").classList.add('d-none')
+    })
+        
+    }
+    function questionActive(qNumber) {
+
+        var qNumber = qNumber || 0
+        document.querySelector("#question_no").innerText = 'Q#.' + parseInt(qNumber + 1) + " " + questions[qNumber].question
+        if (questions[qNumber].qType == true) {
+
+            document.querySelector(".qTypeOther").classList.remove("d-none")
+            document.querySelector(".qTypePrimary").classList.add("d-none")
+        } else {
+            document.querySelector(".qTypeOther").classList.add("d-none")
+            document.querySelector(".qTypePrimary").classList.remove("d-none")
+        }
+
+    }
+    questionActive()
+    
+    const getCats = (showResult)=>{
+
+    if(JSON.parse(showResult)){
+        
+    var panel = document.querySelectorAll(".category-panel")
+    panel.forEach((row,index)=>{
+
+        getCatPercent(row.dataset.id,index)
+    
+})
+}}
+
+    cats.forEach((r)=>{
+        r.style.display ='none'
+    })
+
+</script>
+<script>
+    document.querySelector(".start-btn").addEventListener("click",function(){
+        this.classList.add('d-none')
+        document.querySelector(".qBox").classList.remove('d-none')
+
+    })
+</script>
